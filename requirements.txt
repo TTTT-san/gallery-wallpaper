@@ -1,0 +1,20 @@
+# Installazione delle librerie Python
+ffmpeg == 1.4
+python-ffmpeg==2.0.12
+tqdm==4.64.1
+Pillow==8.4.0  # Per PIL (Python Imaging Library)
+re==2.2.1  # Regular expression (è inclusa di default, ma è stata aggiunta per chiarezza)
+
+# Attenzione: disinstallare la libreria ffmpeg-python
+# ffmpeg-python==4.5.2
+
+# Istruzioni per installare FFmpeg
+# Assicurati di aver installato FFmpeg nel sistema. Segui questi passaggi:
+
+# 1. Scarica FFmpeg da  https://github.com/BtbN/FFmpeg-Builds/releases
+# 2. Estrai l'archivio nella directory di tua scelta.
+# 3. Imposta la variabile PATH_FFMPEG nel tuo codice dove si trova ffmpeg.exe
+
+# Ad esempio, in Python puoi impostare la variabile di ambiente come segue:
+# import os
+# os.environ["PATH_FFMPEG"] = "C:/ffmpeg/bin"

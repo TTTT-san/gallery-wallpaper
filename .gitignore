@@ -60,3 +60,9 @@
 
 # 3D Images
 *.3dm
+
+
+
+# CLion project files
+.idea
+cmake-build-*
