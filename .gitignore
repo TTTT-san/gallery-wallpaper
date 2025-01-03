@@ -62,7 +62,24 @@
 *.3dm
 
 
+# Video
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.flv
+*.webm
+*.wmv
+
+# Run 
+tempCodeRunnerFile.py  
 
 # CLion project files
 .idea
 cmake-build-*
+
+
+
+# Ignore Python cache files
+__pycache__/
+*.pyc 
