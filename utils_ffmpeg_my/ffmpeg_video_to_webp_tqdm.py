@@ -98,38 +98,38 @@ class VideoToWebpConverter:
                     #     '-f', 'gif',
                     #     output_path
                     # ]
-                #     command = [
-                #         ffmpeg_path,
-                #         '-hwaccel', 'auto',
-                #         '-i', video_path,
-                #         '-vf', f'fps={fps},scale={(size["width"])}:-1', #{size["height"]} # ffmpeg -i input.mp4 -vf "eq=contrast=0.5:brightness=0.5:saturation=0.5" output.mp4
-                #         '-loop', '0',
-                #         '-r', str(fps),
-                #         '-f', 'gif',
-                #         '-q:v', '31',
-                #         '-crf', '51',
-                #         '-pix_fmt', 'rgb24',
-                #         '-compression_level', '3', # valore di compressione (0-3)
-                #         '-lossless', '0',
-#                #         '-preset','slow',# I preset disponibili sono: ultrafast, superfast, veryfast, faster, fast, medium (default), slow, slower, veryslow
-                #         output_path
-                 #    ]
-                    command = [
+                     command = [
                          ffmpeg_path,
-                         '-hwaccel', 'auto', # non funge credo
+                         '-hwaccel', 'auto',
                          '-i', video_path,
-                         '-i', r'C:\Users\tesha_r2hyiga\Desktop\gallery-wallpaper\palette\palette_bayer.png',  # Percorso del file della palette
-#                         '-filter_complex', f'[0][1:v]paletteuse=dither=none,scale={size["width"]}:-1,fps={fps}',
-                         '-filter_complex', f'fps={fps},scale={size["width"]}:-1:flags=lanczos,paletteuse=dither=none',
+                         '-vf', f'fps={fps},scale={(size["width"])}:-1', #{size["height"]} # ffmpeg -i input.mp4 -vf "eq=contrast=0.5:brightness=0.5:saturation=0.5" output.mp4
                          '-loop', '0',
                          '-r', str(fps),
                          '-f', 'gif',
-                         '-compression_level', '3', # valore di compressione (0-9)
+                         '-q:v', '31',
+                         '-crf', '51',
+                         '-pix_fmt', 'rgb24',
+                         '-compression_level', '3', # valore di compressione (0-3)
                          '-lossless', '0',
-                         '-crf', '30',
-                         '-preset','slow',# I preset disponibili sono: ultrafast, superfast, veryfast, faster, fast, medium (default), slow, slower, veryslow
+                        '-preset','slow',# I preset disponibili sono: ultrafast, superfast, veryfast, faster, fast, medium (default), slow, slower, veryslow
                          output_path
-                     ]
+                   ]
+#                 #    command = [
+#                          ffmpeg_path,
+#                          '-hwaccel', 'auto', # non funge credo
+#                          '-i', video_path,
+#                          '-i', r'C:\Users\tesha_r2hyiga\Desktop\gallery-wallpaper\palette\palette_bayer.png',  # Percorso del file della palette
+# #                         '-filter_complex', f'[0][1:v]paletteuse=dither=none,scale={size["width"]}:-1,fps={fps}',
+#                          '-filter_complex', f'fps={fps},scale={size["width"]}:-1:flags=lanczos,paletteuse=dither=none',
+#                          '-loop', '0',
+#                          '-r', str(fps),
+#                          '-f', 'gif',
+#                          '-compression_level', '3', # valore di compressione (0-9)
+#                          '-lossless', '0',
+#                          '-crf', '30',
+#                          '-preset','slow',# I preset disponibili sono: ultrafast, superfast, veryfast, faster, fast, medium (default), slow, slower, veryslow
+#                          output_path
+#                      ]
 
 
 
