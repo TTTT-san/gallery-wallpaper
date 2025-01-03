@@ -83,3 +83,4 @@ cmake-build-*
 # Ignore Python cache files
 __pycache__/
 *.pyc 
+/utils_ffmpeg_my/__pycache__
