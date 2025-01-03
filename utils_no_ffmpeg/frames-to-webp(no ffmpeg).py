@@ -102,8 +102,8 @@ def get_max_frames_batch(input_dir, max_memory_mb=500):
 
 
 # Parametri di input
-input_dir = "./blu-haired"
-output_webp = "./output/blue-haired-avg-lossless.webp"
+input_dir = r"C:\Users\tesha_r2hyiga\Desktop\gallery-wallpaper\3820"
+output_webp = "./output/blue-haired-avg-lossless.gif"
 max_frames = 1000
 fps = 60
 

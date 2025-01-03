@@ -1,0 +1,95 @@
+ffmpeg -i input_video.mp4 -vf "fps=10,scale=320:-1:flags=lanczos,palettegen" palette.png
+
+FFmpeg offre diversi algoritmi di ridimensionamento per il filtro `scale`, ognuno con diversi pro e contro a seconda delle necessità di qualità e prestazioni. Di seguito sono elencati alcuni degli algoritmi di ridimensionamento disponibili con il flag `flags` e le loro caratteristiche principali:
+
+### 1. **`lanczos`**
+   - **Descrizione**: È uno degli algoritmi di ridimensionamento più utilizzati, noto per la sua alta qualità. Si basa sull'interpolazione sinc (o "Lanczos resampling") e offre un buon bilanciamento tra qualità e prestazioni.
+   - **Uso**: È preferito quando la qualità dell'immagine è una priorità, specialmente quando si ridimensionano immagini con una grande differenza di dimensioni.
+   
+   ```bash
+   flags=lanczos
+   ```
+
+### 2. **`bilinear`**
+   - **Descrizione**: Utilizza un'interpolazione bilineare, che è più semplice e meno costosa in termini di calcolo rispetto ad altri algoritmi. Questo algoritmo è adatto quando si desidera un buon compromesso tra velocità e qualità.
+   - **Uso**: È utile quando la velocità è più importante della qualità, come nei flussi video in tempo reale o quando si lavora con video a bassa risoluzione.
+   
+   ```bash
+   flags=bilinear
+   ```
+
+### 3. **`bicubic`**
+   - **Descrizione**: L'interpolazione bicubica è più complessa della bilineare, poiché usa i 16 pixel circostanti per determinare il valore di un pixel. Offre una qualità visiva migliore rispetto alla bilineare, ma è più lenta.
+   - **Uso**: È un buon compromesso tra qualità e prestazioni ed è spesso usato per video ad alta risoluzione.
+   
+   ```bash
+   flags=bicubic
+   ```
+
+### 4. **`neighbor`**
+   - **Descrizione**: È il metodo di ridimensionamento più semplice e veloce, che copia il valore del pixel più vicino senza interpolazione. Questo porta a un effetto "pixelato" ma riduce al minimo i tempi di calcolo.
+   - **Uso**: Adatto per applicazioni che richiedono una rapida elaborazione, ma dove la qualità visiva non è fondamentale. Spesso usato per creare effetti retro o pixel art.
+   
+   ```bash
+   flags=neighbor
+   ```
+
+### 5. **`spline16`**
+   - **Descrizione**: Usa un'interpolazione spline di ordine 16, che è un algoritmo di interpolazione ad alta qualità. È una scelta intermedia tra bilineare e Lanczos, cercando di ridurre il disturbo nei dettagli.
+   - **Uso**: Ottimo quando è necessario un ridimensionamento di alta qualità senza il costo computazionale di Lanczos.
+   
+   ```bash
+   flags=spline16
+   ```
+
+### 6. **`spline36`**
+   - **Descrizione**: Un'ulteriore variazione dell'interpolazione spline, ma con ordine 36, che offre una qualità ancora maggiore rispetto a `spline16`. Ha un costo computazionale più elevato.
+   - **Uso**: Utilizzato quando la qualità è la principale preoccupazione, e le risorse computazionali non sono un vincolo.
+   
+   ```bash
+   flags=spline36
+   ```
+
+### 7. **`fast_bilinear`**
+   - **Descrizione**: È una versione più veloce dell'interpolazione bilineare, ma con una qualità leggermente inferiore. Viene usato per applicazioni in tempo reale o quando si ha bisogno di un'elaborazione rapida senza preoccuparsi troppo della qualità.
+   - **Uso**: Usato quando si vuole bilanciare velocità e qualità in tempo reale.
+   
+   ```bash
+   flags=fast_bilinear
+   ```
+
+### 8. **`area`**
+   - **Descrizione**: Usa l'interpolazione basata sull'area, che calcola il valore medio dell'area circostante per determinare il colore del pixel ridimensionato. È utile per ridurre il disturbo in immagini o video.
+   - **Uso**: Ottimo per il ridimensionamento di immagini con grandi aree uniformi, come sfondi o aree monocromatiche.
+   
+   ```bash
+   flags=area
+   ```
+
+### 9. **`mitchell`**
+   - **Descrizione**: Usa un algoritmo di interpolazione Mitchell-Netravali, che fornisce un buon equilibrio tra nitidezza e morbidezza. Questo filtro è una buona scelta per immagini con una varietà di dettagli.
+   - **Uso**: Usato quando si cerca una qualità visiva migliore rispetto alla bilineare, ma senza arrivare alla complessità di Lanczos.
+   
+   ```bash
+   flags=mitchell
+   ```
+
+### 10. **`gaussian`**
+   - **Descrizione**: Usa l'interpolazione gaussiana, che applica una distribuzione gaussiana ai pixel circostanti. È utile per ridurre il rumore nelle immagini durante il ridimensionamento.
+   - **Uso**: Ottimo per immagini con rumore visibile o quando si desidera una transizione più morbida tra i pixel.
+   
+   ```bash
+   flags=gaussian
+   ```
+
+### 11. **`catmull_rom`**
+   - **Descrizione**: Questo algoritmo di interpolazione è simile a `spline`, ma produce immagini più morbide. È più adatto per immagini con transizioni morbide tra i colori.
+   - **Uso**: Adatto per migliorare la qualità visiva delle immagini con transizioni sottili.
+   
+   ```bash
+   flags=catmull_rom
+   ```
+
+### Conclusione:
+Ogni algoritmo di ridimensionamento ha i suoi vantaggi e svantaggi. La scelta dell'algoritmo giusto dipende dalla qualità visiva che desideri ottenere e dalle risorse di elaborazione 
+disponibili. Se la qualità è la tua priorità, `lanczos`, `spline16`, e `bicubic` sono ottimi, ma se la velocità è più importante, `bilinear` o `fast_bilinear` potrebbero essere scelte migliori.

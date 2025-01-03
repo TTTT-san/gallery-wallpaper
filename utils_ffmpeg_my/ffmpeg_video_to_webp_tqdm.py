@@ -4,6 +4,8 @@ import os
 import re
 from dotenv import load_dotenv
 import traceback
+import multiprocessing
+from moviepy.editor import VideoFileClip
 
 
 load_dotenv(dotenv_path='./.env')
@@ -44,86 +46,159 @@ class VideoToWebpConverter:
             }
         }
 
-    def create_webp_animation(self,video_path, output_path, fps:int=10, quality=50, 
-                              ffmpeg_path='C:/ffmpeg/bin/ffmpeg.exe', size={"width": -1, "height": -1}): 
-        """
-        Crea un'animazione WebP a partire da un video utilizzando ffmpeg con barra di progresso.
-        
-        :param video_path: Percorso del video di input.
-        :param output_path: Percorso di destinazione per l'animazione WebP.
-        :param fps: Numero di fotogrammi per secondo nell'animazione WebP.
-        :param quality: Qualità dell'animazione (0-100, dove 0 è la peggiore qualità e 100 la migliore).
-        :param ffmpeg_path: Percorso del file eseguibile ffmpeg.
-        """
-        try:
-            # Verifica che il video di input esista
-            if not os.path.exists(video_path):
-                raise FileNotFoundError(f"Il file di input '{video_path}' non esiste.")
+    def create_webp_animation(self, video_path, output_path, fps=10, quality=0, 
+                                ffmpeg_path='C:/ffmpeg/bin/ffmpeg.exe', size={"width": -1, "height": -1}): 
+            """
+            Crea un'animazione WebP a partire da un video utilizzando ffmpeg con barra di progresso.
             
-            # Verifica che la cartella di destinazione esista
-            output_dir = os.path.dirname(output_path)
-            if not os.path.exists(output_dir):
-                raise FileNotFoundError(f"La cartella di destinazione '{output_dir}' non esiste.")
-        
-            print("size", size)
-        # Nuovo comando con filtro scale per ridurre la larghezza
-            command = [
-                ffmpeg_path,  # Usa il percorso completo di ffmpeg.exe
-                '-i', video_path,  # Input video
-                '-vcodec', 'libwebp',  # Usa il codec WebP
-                '-loop', '0',  # Loop infinito
-                '-q:v', str(quality),  # Qualità
-                '-vf', f'fps={fps},scale={(size["width"])}:{size["height"]}',  # Filtro fps e scale
-                '-y',  # Forza sovrascrittura
-                output_path  # Output WebP
-            ]
-            
-            # Esegui FFmpeg con tqdm
-            process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
+            :param video_path: Percorso del video di input.
+            :param output_path: Percorso di destinazione per l'animazione WebP.
+            :param fps: Numero di fotogrammi per secondo nell'animazione WebP.
+            :param quality: Qualità dell'animazione (0-100, dove 0 è la peggiore qualità e 100 la migliore).
+            :param ffmpeg_path: Percorso del file eseguibile ffmpeg.
+            """
 
-            # Estrai la durata del video
-            duration = None
-            for line in process.stderr:
-                # Trova la durata del video nelle informazioni ffmpeg
-                match = re.search(r"Duration: (\d+):(\d+):(\d+)", line)
-                if match:
-                    hours, minutes, seconds = map(int, match.groups())
-                    duration = hours * 3600 + minutes * 60 + seconds
-                    break
-            
-            # Se non troviamo la durata, imposta un valore di fallback
-            if not duration:
-                duration = 10  # Imposta 10 secondi come fallback
-            
-            # Crea una barra di progresso
-            with tqdm(total=duration, unit='s', desc="Creazione animazione WebP") as pbar:
+            video = VideoFileClip(video_path)
+            fps = video.fps
+            print(f"FPS: {fps}")
+
+            height = video.size[1]
+            width = video.size[0]
+            print(f"Dimensioni: {width}x{height}")
+
+            video.close()
+
+            try:
+                # Verifica file di input
+                if not os.path.exists(video_path):
+                    raise FileNotFoundError(f"Il file di input '{video_path}' non esiste.")
+                
+                # Verifica directory di output
+                output_dir = os.path.dirname(output_path)
+                if not os.path.exists(output_dir):
+                    os.makedirs(output_dir)
+
+
+                # Controlla il numero di core disponibili
+                num_cores = multiprocessing.cpu_count()
+
+                # Usa 2 thread se il sistema ha almeno 2 core
+                threads = 2 if num_cores >= 2 else 1
+                print(f"Numero di core disponibili: {num_cores}. Usando {threads} thread per la conversione.")
+                print("HW acceleration:",'auto')
+                # Crea il comando
+                if output_path.endswith('.gif'):
+                    # command = [
+                    #     ffmpeg_path,
+                    #     '-hwaccel', 'auto',
+                    #     '-i', video_path,
+                    #     '-vf', f'fps={fps},scale={(size["width"])}:{size["height"]}',
+                    #     '-loop', '0',
+                    #     '-r', str(fps),
+                    #     '-f', 'gif',
+                    #     output_path
+                    # ]
+                #     command = [
+                #         ffmpeg_path,
+                #         '-hwaccel', 'auto',
+                #         '-i', video_path,
+                #         '-vf', f'fps={fps},scale={(size["width"])}:-1', #{size["height"]} # ffmpeg -i input.mp4 -vf "eq=contrast=0.5:brightness=0.5:saturation=0.5" output.mp4
+                #         '-loop', '0',
+                #         '-r', str(fps),
+                #         '-f', 'gif',
+                #         '-q:v', '31',
+                #         '-crf', '51',
+                #         '-pix_fmt', 'rgb24',
+                #         '-compression_level', '3', # valore di compressione (0-3)
+                #         '-lossless', '0',
+#                #         '-preset','slow',# I preset disponibili sono: ultrafast, superfast, veryfast, faster, fast, medium (default), slow, slower, veryslow
+                #         output_path
+                 #    ]
+                    command = [
+                         ffmpeg_path,
+                         '-hwaccel', 'auto', # non funge credo
+                         '-i', video_path,
+                         '-i', r'C:\Users\tesha_r2hyiga\Desktop\gallery-wallpaper\palette\palette_bayer.png',  # Percorso del file della palette
+#                         '-filter_complex', f'[0][1:v]paletteuse=dither=none,scale={size["width"]}:-1,fps={fps}',
+                         '-filter_complex', f'fps={fps},scale={size["width"]}:-1:flags=lanczos,paletteuse=dither=none',
+                         '-loop', '0',
+                         '-r', str(fps),
+                         '-f', 'gif',
+                         '-compression_level', '3', # valore di compressione (0-9)
+                         '-lossless', '0',
+                         '-crf', '30',
+                         '-preset','slow',# I preset disponibili sono: ultrafast, superfast, veryfast, faster, fast, medium (default), slow, slower, veryslow
+                         output_path
+                     ]
+
+
+
+                else:
+                    command = [
+                        ffmpeg_path,  # Usa il percorso completo di ffmpeg.exe
+                        '-hwaccel', 'auto',  # Accelerazione hardware automatica
+                        '-i', video_path,  # Input video
+                        '-vcodec', 'libwebp',  # Usa il codec WebP
+                        '-loop', '0',  # Loop infinito
+                        '-crf', str(quality),  # Qualità crf (0-51, dove 0 è la peggiore qualità e 51 la migliore)
+                        '-vf', f'fps={fps},scale={(size["width"])}:{size["height"]}',  # Filtro fps e scale
+                        '-threads', str(threads),  # Numero di thread
+                        '-n',  # Forza sovrascrittura
+                        output_path  # Output WebP
+                    ]
+
+
+                # Esegui FFmpeg
+                process = subprocess.Popen(command, stderr=subprocess.PIPE, universal_newlines=True)
+
+            # Durata del video
+                duration = None
                 for line in process.stderr:
-                    # Cerca il tempo trascorso nel log di ffmpeg
-                    match = re.search(r"time=(\d+):(\d+):(\d+)\.(\d+)", line)
+                    match = re.search(r"Duration: (\d+):(\d+):(\d+)", line)
                     if match:
-                        hours, minutes, seconds, _ = match.groups()
-                        elapsed_time = int(hours) * 3600 + int(minutes) * 60 + int(seconds)
-                        pbar.n = elapsed_time
-                        pbar.last_print_n = elapsed_time
-                        pbar.update(0)  # Forza l'aggiornamento della barra di progresso
+                        hours, minutes, seconds = map(int, match.groups())
+                        duration = hours * 3600 + minutes * 60 + seconds
+                        break
+                
+                if not duration:
+                    duration = 10  # Imposta durata di fallback
 
-            # Attendi che il processo di FFmpeg finisca
-            process.wait()
-
-            print(f"Animazione WebP creata con successo: {output_path}")
-
-        except FileNotFoundError as fnf_error:
-            print(f"Errore: {fnf_error}")
-            # Stampa il traceback per un errore più dettagliato
-            print("Dettagli dell'errore:")
-            traceback.print_exc()
-
-        except PermissionError as perm_error:
-            print(f"Errore di permessi: {perm_error}")
+                import time
+                # Barra di progresso
+                with tqdm(total=duration, unit='s', desc="Creazione animazione WebP",ncols=80) as pbar:
+                    last_elapsed_time = -1  # Variabile per tenere traccia dell'ultimo tempo aggiornato
         
-        except Exception as e:
-            print(f"Errore durante la creazione dell'animazione WebP: {e}")
-            traceback.print_exc()
+                    # Start del tempo per controllo aggiornamenti
+                    start_time = time.time()  
+                    
+                    for line in process.stderr:
+                        match = re.search(r"time=(\d+):(\d+):(\d+)\.(\d+)", line)
+                        if match:
+                            hours, minutes, seconds, _ = match.groups()
+                            elapsed_time = int(hours) * 3600 + int(minutes) * 60 + int(seconds)
+                            
+                            # Aggiorna la barra di progresso solo quando il tempo è cambiato
+                            if elapsed_time > last_elapsed_time:
+                                time_diff = elapsed_time - last_elapsed_time
+                                pbar.update(time_diff)  # Incrementa la barra
+                                last_elapsed_time = elapsed_time  # Aggiorna l'ultimo tempo
+                                
+                            # Verifica se è passato abbastanza tempo per un altro aggiornamento
+                            if (time.time() - start_time) >= 0.1:  # Frequenza di aggiornamento ogni 100ms
+                                start_time = time.time()  # Riavvia il timer
+
+                # Attendi che il processo finisca
+                process.wait()
+
+                print(f"Animazione WebP creata con successo: {output_path}")
+
+            except FileNotFoundError as fnf_error:
+                print(f"Errore: {fnf_error}")
+            except PermissionError as perm_error:
+                print(f"Errore di permessi: {perm_error}")
+            except Exception as e:
+                print(f"Errore durante la creazione dell'animazione WebP: {e}")
+                traceback.print_exc()
 
 
     def select_resolution(self):
