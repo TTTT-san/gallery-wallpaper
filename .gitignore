@@ -84,3 +84,12 @@ cmake-build-*
 __pycache__/
 *.pyc 
 /utils_ffmpeg_my/__pycache__
+
+
+# Ignore Python environment files
+*_internal
+*build
+
+
+
+*.spec

@@ -28,13 +28,16 @@ def video_to_frames(video_path, output_folder, frame_name):
 
     # Salva i frame
     frame_count = 0
-    for _ in tqdm(range(total_frames), desc="Salvataggio frame", unit="frame"):
+    for _ in tqdm(range(total_frames*2), desc="Salvataggio frame", unit="frame"):
         ret, frame = cap.read()
         if not ret:
             break
         frame_path = output_folder / f"{frame_name}_{frame_count:04d}.png"
         cv2.imwrite(str(frame_path), frame)
         frame_count += 1
+        cv2.imwrite(str(frame_path), frame)
+        frame_count += 1
+        
 
     # Rilascia la risorsa video
     cap.release()
@@ -102,7 +105,7 @@ def choose_video_from_folder(folder_path):
                 print("Scelta non valida. Riprova.")
 
 # Chiedi all'utente il percorso del video o della cartella contenente i video
-video_or_folder = get_valid_input("Inserisci il percorso del video o della cartella contenente i video: ", is_valid_video_or_folder)
+video_or_folder = r"C:\Users\tesha_r2hyiga\Desktop\gallery-wallpaper\utils_no_ffmpeg\video\blue-haired-blind-girl.3840x2160.mp4"
 
 # Determina il file video da utilizzare
 if os.path.isdir(video_or_folder):
