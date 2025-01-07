@@ -16,6 +16,8 @@ class ConfigModel:
             "wallpaper_velocity": self.wallpaper_velocity,
             "start_up": self.is_start_up
         }
+    def __str__(self):
+        return "wallpaper_path: {0}\nis_video: {1}\nwallpaper_velocity: {2}\nis_start_up: {3}".format(self.wallpaper_path, self.is_video, self.wallpaper_velocity, self.is_start_up)
 
     @staticmethod
     def from_dict(data):
@@ -61,7 +63,7 @@ class ConfigManager:
             setattr(self.config_data, key, value)
             self.save_config(self.config_data)  # Salva il file aggiornato
             print(f"Configurazione aggiornata: {key} = {value}")
-
+   
 
 if __name__ == "__main__":
     # Esempio di utilizzo della classe

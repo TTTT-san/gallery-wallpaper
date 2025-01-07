@@ -14,7 +14,7 @@ def aggiungi_avvio_automatico():
     percorso_batch = os.path.join(startup_folder, nome_batch)
     
     # Contenuto del file batch
-    contenuto_batch = f'@echo off\npython "{percorso_script}"\n'
+    contenuto_batch = f'@echo off\n py "{percorso_script}"\n'
     
     # Creazione del file batch nella cartella Startup
     with open(percorso_batch, 'w') as batch_file:
